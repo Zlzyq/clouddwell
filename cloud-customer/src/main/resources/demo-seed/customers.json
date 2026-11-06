@@ -1,0 +1,5 @@
+[
+  {"id":1,"name":"张三","phone":"13800138001","idCard":"110101199001011234","gender":"男","email":"zhangsan@example.com","membership":"黄金会员","registerTime":"2024-01-15 10:00:00","createTime":"2024-01-15 10:00:00"},
+  {"id":2,"name":"李四","phone":"13800138002","idCard":"110101199002021235","gender":"女","email":"lisi@example.com","membership":"白银会员","registerTime":"2024-02-20 10:00:00","createTime":"2024-02-20 10:00:00"},
+  {"id":3,"name":"王五","phone":"13800138003","idCard":"110101199003031236","gender":"男","email":"wangwu@example.com","membership":"普通会员","registerTime":"2024-03-10 10:00:00","createTime":"2024-03-10 10:00:00"}
+]

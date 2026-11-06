@@ -1,0 +1,7 @@
+[
+  {"id":1,"roomNumber":"1001","type":"大床房","price":588.00,"capacity":2,"status":"空闲","hotelId":1,"description":"舒适大床房，配备智能设施","createTime":"2024-01-01 10:00:00"},
+  {"id":2,"roomNumber":"1002","type":"双床房","price":688.00,"capacity":2,"status":"空闲","hotelId":1,"description":"标准双床房","createTime":"2024-01-01 10:00:00"},
+  {"id":3,"roomNumber":"2001","type":"豪华套房","price":1288.00,"capacity":3,"status":"空闲","hotelId":1,"description":"豪华套房，带客厅","createTime":"2024-01-01 10:00:00"},
+  {"id":4,"roomNumber":"A001","type":"海景大床房","price":888.00,"capacity":2,"status":"空闲","hotelId":2,"description":"海景房，落地窗","createTime":"2024-01-02 10:00:00"},
+  {"id":5,"roomNumber":"B001","type":"标准间","price":299.00,"capacity":2,"status":"空闲","hotelId":3,"description":"经济实惠标准间","createTime":"2024-01-03 10:00:00"}
+]

@@ -1,0 +1,5 @@
+[
+  {"id":1,"hotelId":1,"roomId":1,"customerName":"张三","customerPhone":"13800138001","checkInDate":"2024-03-01","checkOutDate":"2024-03-03","totalAmount":1176.00,"status":"已入住","createTime":"2024-02-28 10:00:00"},
+  {"id":2,"hotelId":2,"roomId":4,"customerName":"李四","customerPhone":"13800138002","checkInDate":"2024-03-05","checkOutDate":"2024-03-07","totalAmount":1776.00,"status":"已预订","createTime":"2024-03-01 10:00:00"},
+  {"id":3,"hotelId":3,"roomId":5,"customerName":"王五","customerPhone":"13800138003","checkInDate":"2024-03-10","checkOutDate":"2024-03-11","totalAmount":299.00,"status":"已取消","createTime":"2024-03-08 10:00:00"}
+]
