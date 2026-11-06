@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "code": "SKU-DEMO",
+    "name": "演示商品 A",
+    "category": "数码",
+    "price": "9.99",
+    "stock": 500,
+    "status": "1"
+  },
+  {
+    "id": 2,
+    "code": "SKU-BOOK",
+    "name": "Spring Cloud 实战",
+    "category": "图书",
+    "price": "89.00",
+    "stock": 120,
+    "status": "1"
+  },
+  {
+    "id": 3,
+    "code": "SKU-CLOUD",
+    "name": "云服务套餐-基础版",
+    "category": "服务",
+    "price": "299.00",
+    "stock": 9999,
+    "status": "1"
+  }
+]

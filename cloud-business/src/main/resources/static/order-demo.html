@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <title>订单演示</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui; background: #f5f5f5; padding: 40px; }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
+
+        .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+        .card h2 { font-size: 16px; margin-bottom: 12px; color: #666; }
+
+        .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+        .form-row label { font-size: 13px; color: #888; display: block; margin-bottom: 4px; }
+        .form-row input, .form-row select {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%;
+        }
+
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn {
+            padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; color: #fff;
+            transition: opacity .2s;
+        }
+        .btn:hover { opacity: .85; }
+        .btn:disabled { opacity: .4; cursor: not-allowed; }
+        .btn-submit { background: #1677ff; }
+        .btn-pay    { background: #52c41a; }
+        .btn-cancel { background: #fa8c16; }
+        .btn-refund { background: #ff4d4f; }
+        .btn-reset  { background: #999; }
+
+        .log { background: #1e1e1e; color: #c9d1d9; border-radius: 8px; padding: 16px; font-size: 13px; font-family: monospace; max-height: 300px; overflow-y: auto; margin-top: 8px; }
+        .log .success { color: #3fb950; }
+        .log .error   { color: #f85149; }
+        .log .info    { color: #79c0ff; }
+        .log-line { padding: 2px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🛒 订单演示</h1>
+
+    <div class="card">
+        <h2>👤 用户信息</h2>
+        <div class="form-row">
+            <div style="flex:1">
+                <label>用户 ID</label>
+                <input type="number" id="userId" value="10086" min="1">
+            </div>
+            <div style="flex:1">
+                <label>商品编码</label>
+                <input type="text" id="productCode" value="SKU-DEMO">
+            </div>
+            <div style="flex:1">
+                <label>数量</label>
+                <input type="number" id="quantity" value="1" min="1">
+            </div>
+        </div>
+        <div style="font-size:12px;color:#999;margin-bottom:8px">登录密码: admin888</div>
+    </div>
+
+    <div class="card">
+        <h2>🔧 操作</h2>
+        <div class="btn-group">
+            <button class="btn btn-submit" onclick="submitOrder()">📝 下单</button>
+            <button class="btn btn-pay" onclick="payOrder()">💳 支付</button>
+            <button class="btn btn-cancel" onclick="cancelOrder()">❌ 取消</button>
+            <button class="btn btn-refund" onclick="refundOrder()">💰 退款</button>
+            <button class="btn btn-reset" onclick="clearLog()">🗑️ 清日志</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📋 日志</h2>
+        <div class="log" id="log"></div>
+    </div>
+</div>
+
+<script>
+    // API 基础路径（网关地址，按实际修改端口）
+    const GATEWAY = 'http://localhost:9000';
+    const API = GATEWAY + '/cloud-business/api';
+    const AUTH_API = GATEWAY + '/cloud-auth/api';
+
+    let currentOrderNo = '';
+    let currentToken = '';
+
+    // 获取用户输入的订单号
+    function getOrderNo() {
+        return document.getElementById('orderNo')?.value || currentOrderNo;
+    }
+
+    // 日志
+    function log(msg, type = 'info') {
+        const el = document.getElementById('log');
+        const line = document.createElement('div');
+        line.className = 'log-line ' + type;
+        line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        el.appendChild(line);
+        el.scrollTop = el.scrollHeight;
+    }
+    function clearLog() { document.getElementById('log').innerHTML = ''; }
+
+    // 先登录获取 token
+    async function login() {
+        const userId = document.getElementById('userId').value;
+        try {
+            const res = await fetch(AUTH_API + '/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: parseInt(userId), password: 'admin888' })
+            });
+            const data = await res.json();
+            if (data.code === 1000 || data.code === 200) {
+                currentToken = data.data.token;
+                log('登录成功', 'success');
+                return true;
+            } else {
+                log('登录失败: ' + data.message, 'error');
+                return false;
+            }
+        } catch (e) {
+            log('登录请求异常: ' + e.message, 'error');
+            return false;
+        }
+    }
+
+    function authHeaders() {
+        return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + currentToken };
+    }
+
+    async function submitOrder() {
+        if (!await login()) return;
+        const userId = parseInt(document.getElementById('userId').value);
+        const productCode = document.getElementById('productCode').value;
+        const quantity = parseInt(document.getElementById('quantity').value);
+        try {
+            const res = await fetch(API + '/orders/submit', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ buyerUserId: userId, productCode, quantity })
+            });
+            const data = await res.json();
+            if (data.code === 200 || data.code === 1000) {
+                currentOrderNo = data.data.orderNo;
+                log(`下单成功！订单号: ${currentOrderNo}`, 'success');
+            } else {
+                log('下单失败: ' + data.message, 'error');
+            }
+            return data;
+        } catch (e) {
+            log('下单异常: ' + e.message, 'error');
+        }
+    }
+
+    async function payOrder() {
+        if (!currentOrderNo) { log('⚠️ 请先下单', 'error'); return; }
+        try {
+            const res = await fetch(API + '/orders/pay/' + currentOrderNo, {
+                method: 'POST',
+                headers: authHeaders()
+            });
+            const data = await res.json();
+            if (data.code === 200 || data.code === 1000) {
+                log('支付成功！', 'success');
+            } else {
+                log('支付失败: ' + data.message, 'error');
+            }
+        } catch (e) {
+            log('支付异常: ' + e.message, 'error');
+        }
+    }
+
+    async function cancelOrder() {
+        if (!currentOrderNo) { log('⚠️ 请先下单', 'error'); return; }
+        try {
+            const res = await fetch(API + '/orders/cancel/' + currentOrderNo, {
+                method: 'POST',
+                headers: authHeaders()
+            });
+            const data = await res.json();
+            if (data.code === 200 || data.code === 1000) {
+                log('取消成功！', 'success');
+            } else {
+                log('取消失败: ' + data.message, 'error');
+            }
+        } catch (e) {
+            log('取消异常: ' + e.message, 'error');
+        }
+    }
+
+    async function refundOrder() {
+        if (!currentOrderNo) { log('⚠️ 请先下单', 'error'); return; }
+        try {
+            const res = await fetch(API + '/orders/refund/' + currentOrderNo, {
+                method: 'POST',
+                headers: authHeaders()
+            });
+            const data = await res.json();
+            if (data.code === 200 || data.code === 1000) {
+                log('退款成功！', 'success');
+            } else {
+                log('退款失败: ' + data.message, 'error');
+            }
+        } catch (e) {
+            log('退款异常: ' + e.message, 'error');
+        }
+    }
+</script>
+</body>
+</html>

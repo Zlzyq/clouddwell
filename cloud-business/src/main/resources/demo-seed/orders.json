@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "orderNo": "ORD202605170001",
+    "buyerName": "演示用户一号",
+    "productCode": "SKU-DEMO",
+    "productName": "演示商品 A",
+    "quantity": 2,
+    "amount": "19.98",
+    "status": "DONE",
+    "createTime": "2026-05-17 08:12:33"
+  },
+  {
+    "id": 2,
+    "orderNo": "ORD202605170002",
+    "buyerName": "演示用户二号",
+    "productCode": "SKU-BOOK",
+    "productName": "Spring Cloud 实战",
+    "quantity": 1,
+    "amount": "89.00",
+    "status": "SHIPPED",
+    "createTime": "2026-05-17 09:45:10"
+  },
+  {
+    "id": 3,
+    "orderNo": "ORD202605170003",
+    "buyerName": "演示用户10086",
+    "productCode": "SKU-CLOUD",
+    "productName": "云服务套餐-基础版",
+    "quantity": 1,
+    "amount": "299.00",
+    "status": "PAID",
+    "createTime": "2026-05-17 10:20:05"
+  },
+  {
+    "id": 4,
+    "orderNo": "ORD202605160018",
+    "buyerName": "演示用户一号",
+    "productCode": "SKU-DEMO",
+    "productName": "演示商品 A",
+    "quantity": 5,
+    "amount": "49.95",
+    "status": "CANCEL",
+    "createTime": "2026-05-16 16:33:41"
+  },
+  {
+    "id": 5,
+    "orderNo": "ORD202605150007",
+    "buyerName": "演示用户二号",
+    "productCode": "SKU-DEMO",
+    "productName": "演示商品 A",
+    "quantity": 1,
+    "amount": "9.99",
+    "status": "PENDING",
+    "createTime": "2026-05-15 11:08:22"
+  }
+]

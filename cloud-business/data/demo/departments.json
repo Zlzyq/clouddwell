@@ -1,0 +1,22 @@
+[ {
+  "id" : 1,
+  "companyName" : "云演示科技有限公司",
+  "name" : "研发中心",
+  "leader" : "王工",
+  "phone" : "13800001001",
+  "status" : "1"
+}, {
+  "id" : 2,
+  "companyName" : "云演示科技有限公司",
+  "name" : "产品运营部",
+  "leader" : "赵敏",
+  "phone" : "13800001002",
+  "status" : "1"
+}, {
+  "id" : 3,
+  "companyName" : "华东事业部",
+  "name" : "销售一部",
+  "leader" : "刘洋",
+  "phone" : "13800001003",
+  "status" : "1"
+} ]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "loginName": "admin",
+    "userName": "演示用户一号",
+    "deptName": "研发中心",
+    "role": "超级管理员",
+    "phone": "13900000001",
+    "status": "1"
+  },
+  {
+    "id": 2,
+    "loginName": "ops02",
+    "userName": "演示用户二号",
+    "deptName": "产品运营部",
+    "role": "运营专员",
+    "phone": "13900000002",
+    "status": "1"
+  },
+  {
+    "id": 3,
+    "loginName": "user10086",
+    "userName": "演示用户10086",
+    "deptName": "销售一部",
+    "role": "普通用户",
+    "phone": "13900010086",
+    "status": "1"
+  }
+]

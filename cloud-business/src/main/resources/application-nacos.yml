@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+    openfeign:
+      client:
+        config:
+          systemUserFeignClient:
+            url: ~
+          systemProductFeignClient:
+            url: ~

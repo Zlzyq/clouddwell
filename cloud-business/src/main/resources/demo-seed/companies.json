@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "code": "CLOUD-DEMO",
+    "name": "云演示科技有限公司",
+    "contact": "张经理",
+    "phone": "400-800-9000",
+    "status": "1",
+    "createTime": "2026-01-10 09:00:00"
+  },
+  {
+    "id": 2,
+    "code": "EAST-BRANCH",
+    "name": "华东事业部",
+    "contact": "李主管",
+    "phone": "021-88886666",
+    "status": "1",
+    "createTime": "2026-02-15 14:30:00"
+  }
+]
