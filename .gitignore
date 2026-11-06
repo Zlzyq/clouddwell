@@ -4,6 +4,6 @@ target/
 *.iml
 *.log
 logs/
-data/archives/
-data/demo/
+data/
+test/
 .DS_Store
