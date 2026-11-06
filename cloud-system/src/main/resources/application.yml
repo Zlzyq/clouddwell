@@ -1,0 +1,40 @@
+server:
+  port: 9102
+
+spring:
+  application:
+    name: cloud-system
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/cloud_system?useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: DEFAULT_GROUP
+        enabled: ${NACOS_ENABLED:true}
+
+cloud:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:cloud-dwell-dev-only-secret-please-change-me-32}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+knife4j:
+  enable: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

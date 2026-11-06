@@ -1,0 +1,102 @@
+# 单机：默认直连各服务固定端口；先启动 auth 9101 / system 9102 / business 9103 再启网关。
+# 注册中心：--spring.profiles.active=nacos
+server:
+  port: 9000
+
+# 直连下游（可被环境变量或 nacos profile 覆盖为 lb://...）
+gateway:
+  routes:
+    auth: ${GATEWAY_ROUTE_AUTH:http://127.0.0.1:9101}
+    system: ${GATEWAY_ROUTE_SYSTEM:http://127.0.0.1:9102}
+    business: ${GATEWAY_ROUTE_BUSINESS:http://127.0.0.1:9103}
+    hotel: ${GATEWAY_ROUTE_HOTEL:http://127.0.0.1:9111}
+    room: ${GATEWAY_ROUTE_ROOM:http://127.0.0.1:9112}
+    booking: ${GATEWAY_ROUTE_BOOKING:http://127.0.0.1:9113}
+    customer: ${GATEWAY_ROUTE_CUSTOMER:http://127.0.0.1:9114}
+
+spring:
+  application:
+    name: cloud-gateway
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  codec:
+    max-in-memory-size: 10MB
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: DEFAULT_GROUP
+        enabled: ${NACOS_ENABLED:true}
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          "[/**]":
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: false
+      routes:
+        - id: cloud-auth
+          uri: ${gateway.routes.auth}
+          predicates:
+            - Path=/cloud-auth/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-system
+          uri: ${gateway.routes.system}
+          predicates:
+            - Path=/cloud-system/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-business
+          uri: ${gateway.routes.business}
+          predicates:
+            - Path=/cloud-business/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-hotel
+          uri: ${gateway.routes.hotel}
+          predicates:
+            - Path=/cloud-hotel/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-room
+          uri: ${gateway.routes.room}
+          predicates:
+            - Path=/cloud-room/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-booking
+          uri: ${gateway.routes.booking}
+          predicates:
+            - Path=/cloud-booking/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-customer
+          uri: ${gateway.routes.customer}
+          predicates:
+            - Path=/cloud-customer/**
+          filters:
+            - StripPrefix=1
+
+cloud:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:cloud-dwell-dev-only-secret-please-change-me-32}
+      issuer: cloud-auth
+      access-token-ttl-seconds: 7200
+  gateway:
+    archive:
+      # 档案与上传文件目录（相对网关启动工作目录）
+      upload-dir: ./data/archives
+      max-file-size: 10485760
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

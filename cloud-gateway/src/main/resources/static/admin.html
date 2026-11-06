@@ -1,0 +1,1247 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>管理后台</title>
+    <script src="/js/theme.js?v=2"></script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="stylesheet" href="/css/themes.css"/>
+    <link rel="stylesheet" href="/css/app.css"/>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=d20f1f5b4d0977c625fa555ae0e17ed6"></script>
+<style>
+/* ========== 工作台新样式 ========== */
+.dash-top { display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap }
+.dash-widget { flex:1; background:var(--card-bg,#fff); border-radius:16px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; align-items:center; gap:16px; border:1px solid var(--border,#f0f0f0); min-width:200px }
+.dash-widget-weather { flex:0 0 240px }
+.dash-weather-icon { font-size:46px; line-height:1 }
+.dash-weather-temp { font-size:30px; font-weight:700; color:var(--text,#333) }
+.dash-weather-desc { font-size:14px; color:var(--muted,#999); margin-top:2px }
+.dash-weather-city { font-size:12px; color:var(--muted,#bbb); margin-top:1px }
+.dash-widget-welcome { flex:2 }
+.dash-widget-welcome h2 { margin:0 0 4px; font-size:20px }
+.dash-widget-welcome p { margin:0; font-size:14px; color:var(--muted,#999) }
+.dash-widget-quote { flex:1.5 }
+.quote-icon { font-size:34px }
+.quote-text { font-size:15px; color:var(--text,#555); line-height:1.7; font-style:italic }
+.quote-author { font-size:12px; color:var(--muted,#bbb); margin-top:4px; text-align:right }
+.dash-stats { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap }
+.dash-stat { flex:1; min-width:140px; background:var(--card-bg,#fff); border-radius:12px; padding:14px 20px; border:1px solid var(--border,#f0f0f0) }
+.dash-stat-label { font-size:13px; color:var(--muted,#999); margin-bottom:4px }
+.dash-stat-value { font-size:22px; font-weight:700; color:var(--text,#333) }
+.dash-quick { background:var(--card-bg,#fff); border-radius:16px; padding:24px; border:1px solid var(--border,#f0f0f0); margin-bottom:1rem }
+.dash-quick-title { font-size:16px; font-weight:600; color:var(--text,#333); margin-bottom:16px; display:flex; align-items:center; gap:8px }
+.dash-quick-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:12px }
+.dash-quick-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:18px 12px; border-radius:14px; border:1.5px solid var(--border,#eee); background:var(--card-bg,#fafafa); cursor:pointer; transition:all .25s; font-size:14px; color:var(--text,#555); user-select:none; font-family:inherit }
+.dash-quick-btn:hover { border-color:var(--accent,#1890ff); background:var(--accent-light,#f0f8ff); color:var(--accent,#1890ff); transform:translateY(-3px); box-shadow:0 6px 16px rgba(24,144,255,0.15) }
+.dash-quick-btn:active { transform:translateY(0); box-shadow:none }
+.dash-quick-icon { font-size:30px; line-height:1 }
+.dash-quick-label { font-size:13px; font-weight:500; text-align:center }
+
+/* 侧栏折叠 */
+.sidebar-toggle { background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--muted); padding:4px 8px; border-radius:6px; transition:background .15s,color .15s; display:flex; align-items:center; font-family:inherit; line-height:1 }
+.sidebar-toggle:hover { background:var(--accent-soft); color:var(--text) }
+.sidebar { transition:transform .28s var(--ease) }
+.main { transition:margin-left .28s var(--ease) }
+.layout.sidebar-hidden .sidebar { transform:translateX(-100%) }
+.layout.sidebar-hidden .main { margin-left:0 }
+</style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo">SC</div>
+            <span>Cloud 管理台</span>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">主菜单</div>
+            <button type="button" class="nav-item active" data-page="dashboard"><span class="icon">⌂</span>工作台</button>
+
+            <div class="nav-group">管理中心</div>
+            <button type="button" class="nav-item" data-page="orderMgmt"><span class="icon">🛒</span>订单管理</button>
+            <button type="button" class="nav-item" data-page="seckillMgmt"><span class="icon">⚡</span>秒杀活动</button>
+            <button type="button" class="nav-item" data-page="hotelAmenity"><span class="icon">🏷️</span>酒店待遇</button>
+            <button type="button" class="nav-item" data-page="restaurantAmenity"><span class="icon">🍜</span>饭店管理</button>
+            <button type="button" class="nav-item" data-page="hotel"><span class="icon">🏨</span>酒店房间</button>
+            <button type="button" class="nav-item" data-page="archive"><span class="icon">🗂️</span>档案管理</button>
+            <button type="button" class="nav-item" data-page="company"><span class="icon">🏢</span>企业管理</button>
+            <button type="button" class="nav-item" data-page="department"><span class="icon">🏬</span>部门管理</button>
+            <button type="button" class="nav-item" data-page="userMgmt"><span class="icon">👥</span>用户管理</button>
+            <button type="button" class="nav-item" data-page="productMgmt"><span class="icon">📦</span>产品管理</button>
+            <button type="button" class="nav-item" data-page="room"><span class="icon">🛏️</span>客房管理</button>
+            <button type="button" class="nav-item" data-page="booking"><span class="icon">📋</span>预订管理</button>
+            <button type="button" class="nav-item" data-page="customer"><span class="icon">👤</span>客户管理</button>
+
+            <div class="nav-group">开发记录</div>
+            <button type="button" class="nav-item" data-page="devdiary"><span class="icon">📖</span>版本记录</button>
+	        </nav>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div style="display:flex;align-items:center;gap:12px">
+                <button type="button" class="sidebar-toggle" id="btnSidebarToggle" title="隐藏侧栏">☰</button>
+                <button type="button" class="sidebar-toggle" id="btnHome" title="返回主页">🏠</button>
+                <div class="topbar-title" id="pageTitle">工作台</div>
+            </div>
+            <div class="user-bar">
+                <div id="themeMount" class="theme-mount"></div>
+                <div class="user-meta">
+                    <div class="name" id="headerUserName">-</div>
+                    <span class="role" id="headerRole">-</span>
+                </div>
+                <img id="headerAvatar" class="avatar" src="/img/avatar-1.png" alt="avatar"/>
+                <button type="button" class="btn btn-ghost btn-sm" id="btnLogout">退出</button>
+            </div>
+        </header>
+
+        <div class="content">
+            <section id="page-dashboard" class="page active">
+                <!-- 顶部：天气 | 欢迎 | 每日金句 -->
+                <div class="dash-top">
+                    <div class="dash-widget dash-widget-weather">
+                        <div class="dash-weather-icon" id="weatherIcon">🌤️</div>
+                        <div class="dash-weather-info">
+                            <div class="dash-weather-temp" id="weatherTemp">--°C</div>
+                            <div class="dash-weather-desc" id="weatherDesc">获取天气中...</div>
+                            <div class="dash-weather-city" id="weatherCity">📍 北京</div>
+                        </div>
+                    </div>
+                    <div class="dash-widget dash-widget-welcome">
+                        <img id="welcomeAvatar" class="avatar-lg" src="/img/avatar-1.png" alt=""/>
+                        <div>
+                            <h2 id="welcomeText">欢迎回来</h2>
+                            <p id="welcomeSub">已通过 JWT 登录，可在管理中心进行数据管理。</p>
+                        </div>
+                    </div>
+                    <div class="dash-widget dash-widget-quote">
+                        <div class="quote-icon">💬</div>
+                        <div>
+                            <div class="quote-text" id="quoteText">加载中...</div>
+                            <div class="quote-author" id="quoteAuthor">——</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 状态卡片 -->
+                <div class="dash-stats">
+                    <div class="dash-stat"><div class="dash-stat-label">👤 用户 ID</div><div class="dash-stat-value" id="statUserId">-</div></div>
+                    <div class="dash-stat"><div class="dash-stat-label">🎭 角色</div><div class="dash-stat-value" id="statRole">-</div></div>
+                    <div class="dash-stat"><div class="dash-stat-label">⏱️ Token 有效期</div><div class="dash-stat-value" id="statExpire">-</div></div>
+                    <div class="dash-stat"><div class="dash-stat-label">🔌 网关端口</div><div class="dash-stat-value">9000</div></div>
+                </div>
+
+                <!-- 快捷入口 -->
+                <div class="dash-quick">
+                    <div class="dash-quick-title">🚀 快捷入口</div>
+                    <div class="dash-quick-grid">
+                        <button type="button" class="dash-quick-btn" data-goto="orderMgmt"><span class="dash-quick-icon">🛒</span><span class="dash-quick-label">订单管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="seckillMgmt"><span class="dash-quick-icon">⚡</span><span class="dash-quick-label">秒杀活动</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="hotelAmenity"><span class="dash-quick-icon">🏷️</span><span class="dash-quick-label">酒店待遇</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="restaurantAmenity"><span class="dash-quick-icon">🍜</span><span class="dash-quick-label">饭店管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="hotel"><span class="dash-quick-icon">🏨</span><span class="dash-quick-label">酒店房间</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="archive"><span class="dash-quick-icon">🗂️</span><span class="dash-quick-label">档案管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="company"><span class="dash-quick-icon">🏢</span><span class="dash-quick-label">企业管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="department"><span class="dash-quick-icon">🏬</span><span class="dash-quick-label">部门管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="userMgmt"><span class="dash-quick-icon">👥</span><span class="dash-quick-label">用户管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="productMgmt"><span class="dash-quick-icon">📦</span><span class="dash-quick-label">产品管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="room"><span class="dash-quick-icon">🛏️</span><span class="dash-quick-label">客房管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="booking"><span class="dash-quick-icon">📋</span><span class="dash-quick-label">预订管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="customer"><span class="dash-quick-icon">👤</span><span class="dash-quick-label">客户管理</span></button>
+                        <button type="button" class="dash-quick-btn" data-goto="devdiary"><span class="dash-quick-icon">📖</span><span class="dash-quick-label">版本记录</span></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-company" class="page"><div id="crud-company"></div></section>
+            <section id="page-department" class="page"><div id="crud-department"></div></section>
+            <section id="page-userMgmt" class="page"><div id="crud-userMgmt"></div></section>
+            <section id="page-productMgmt" class="page"><div id="crud-productMgmt"></div></section>
+            <section id="page-orderMgmt" class="page">
+                <div class="card" style="margin-bottom:1rem">
+                    <h3>🛒 模拟用户下单</h3>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:end">
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--muted)">用户 ID</label>
+                            <input id="simBuyerId" type="number" value="1" style="width:100px"/>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--muted)">买家名称</label>
+                            <input id="simBuyerName" type="text" style="width:120px" placeholder="自动填充"/>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--muted)">商品</label>
+                            <select id="simSku" style="width:160px;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+                                <option value="SKU-DEMO">SKU-DEMO - 演示商品 A</option>
+                                <option value="SKU-BOOK">SKU-BOOK - Spring Cloud 实战</option>
+                                <option value="SKU-CLOUD">SKU-CLOUD - 云服务套餐</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--muted)">商品名称</label>
+                            <input id="simProductName" type="text" value="演示商品 A" readonly style="width:140px;background:#f5f5f5"/>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--muted)">数量</label>
+                            <input id="simQty" type="number" value="1" min="1" style="width:80px"/>
+                        </div>
+                        <button type="button" class="btn" id="btnSimOrder">提交订单</button>
+                    </div>
+                    <p class="hint" style="margin-top:0.5rem">调用真实下单 API → 超时队列 → 同步到下方订单列表</p>
+                    <pre id="simOrderOutput" style="margin-top:0.5rem;padding:0.5rem;background:var(--bg);border-radius:6px;font-size:0.8rem;overflow:auto;max-height:120px;white-space:pre-wrap">等待下单…</pre>
+                </div>
+                <div class="card" style="margin-bottom:1rem">
+                    <h3>🔧 订单操作</h3>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:end">
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--muted)">订单号</label>
+                            <input id="simOrderNo" type="text" style="width:280px" placeholder="下单后自动填入"/>
+                        </div>
+                        <button type="button" class="btn" style="background:#52c41a;color:#fff" id="btnSimPay">💳 支付</button>
+                        <button type="button" class="btn" style="background:#fa8c16;color:#fff" id="btnSimCancel">❌ 取消</button>
+                        <button type="button" class="btn" style="background:#ff4d4f;color:#fff" id="btnSimRefund">💰 退款</button>
+                    </div>
+                    <pre id="simOrderActionOutput" style="margin-top:0.5rem;padding:0.5rem;background:var(--bg);border-radius:6px;font-size:0.8rem;overflow:auto;max-height:80px;white-space:pre-wrap">等待操作…</pre>
+                </div>
+                <div id="crud-orderMgmt"></div>
+            </section>
+            <section id="page-archive" class="page"><div id="crud-archive"></div></section>
+            <section id="page-hotel" class="page"><div id="crud-hotel"></div></section>
+            <section id="page-room" class="page"><div id="crud-room"></div></section>
+            <section id="page-booking" class="page"><div id="crud-booking"></div></section>
+            <section id="page-customer" class="page"><div id="crud-customer"></div></section>
+            <section id="page-seckillMgmt" class="page"><div id="crud-seckillMgmt"></div></section>
+            <section id="page-restaurantAmenity" class="page">
+                <div class="card" style="margin-bottom:1rem;display:none" id="restaurantTestDataPanel">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+                        <h3 style="margin:0;font-size:1rem">🧪 压测工具（MySQL）</h3>
+                        <span id="restaurantTestDataStatus" style="font-size:0.8rem;color:var(--muted)">就绪</span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+                        <span style="font-size:0.85rem;color:var(--muted)">生成</span>
+                        <input id="restaurantTestDataCount" type="number" value="10000" min="1" max="1000000"
+                               style="width:100px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:14px"/>
+                        <span style="font-size:0.85rem;color:var(--muted)">条</span>
+                        <button type="button" class="btn btn-ghost btn-sm" data-restaurant-quick="10000">1万</button>
+                        <button type="button" class="btn btn-ghost btn-sm" data-restaurant-quick="100000">10万</button>
+                        <button type="button" class="btn btn-ghost btn-sm" data-restaurant-quick="500000">50万</button>
+                        <button type="button" class="btn btn-ghost btn-sm" data-restaurant-quick="1000000">100万</button>
+                        <span style="width:1px;height:24px;background:#ddd;margin:0 0.25rem"></span>
+                        <button type="button" class="btn btn-sm" id="btnRestaurantGenerateTest" style="background:#722ed1;color:#fff">⚡ 生成</button>
+                        <button type="button" class="btn btn-ghost btn-sm" id="btnRestaurantClearTest" style="color:#ff4d4f">🗑️ 清空测试数据</button>
+                    </div>
+                </div>
+                <style>
+                .es-panel .es-search-row { display:flex;gap:12px;align-items:center;flex-wrap:wrap }
+                .es-panel .es-search-input { flex:1;min-width:200px;padding:10px 16px;border:2px solid #e8e8e8;border-radius:12px;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s }
+                .es-panel .es-search-input:focus { border-color:#1890ff;box-shadow:0 0 0 3px rgba(24,144,255,0.15) }
+                .es-panel .es-tags { display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 }
+                .es-panel .es-tag { padding:4px 16px;border-radius:20px;font-size:13px;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#666;transition:all .2s;user-select:none }
+                .es-panel .es-tag:hover { border-color:#1890ff;color:#1890ff;background:#f0f8ff }
+                .es-panel .es-tag.active { border-color:#1890ff;background:#1890ff;color:#fff }
+                .es-panel .es-badge { display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500 }
+                .es-panel .es-badge-rating { background:#fff7e6;color:#fa8c16 }
+                .es-panel .es-badge-tag { background:#f0f5ff;color:#1890ff }
+                .es-panel .es-stat { font-size:13px;color:#999;padding:4px 0 }
+                .es-panel .es-stat em { font-style:normal;color:#1890ff;font-weight:600 }
+                .es-panel .es-results { margin-top:12px }
+                .es-panel .es-card { display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #f0f0f0;transition:background .15s }
+                .es-panel .es-card:hover { background:#fafafa }
+                .es-panel .es-card:last-child { border-bottom:none }
+                .es-panel .es-card-info { flex:1;min-width:0 }
+                .es-panel .es-card-name { font-size:15px;font-weight:600;color:#333 }
+                .es-panel .es-card-addr { font-size:12px;color:#999;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap }
+                .es-panel .es-card-meta { display:flex;flex-wrap:wrap;gap:6px;margin-top:6px }
+                .es-panel .es-card-extra { text-align:right;flex-shrink:0;margin-left:12px }
+                .es-panel .es-card-cuisine { font-size:13px;color:#666;margin-top:2px }
+                .es-panel .es-toolbar { display:flex;gap:8px;align-items:center;flex-wrap:wrap }
+                .es-panel em { color:#ff4d4f;font-style:normal }
+                </style>
+                <div class="card es-panel" style="margin-bottom:1rem" id="restaurantEsPanel">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+                        <h3 style="margin:0;font-size:1.1rem;font-weight:600">🔍 ES 搜索</h3>
+                        <div class="es-toolbar">
+                            <button type="button" class="btn btn-ghost btn-sm" id="btnEsImport">📥 导入数据</button>
+                            <button type="button" class="btn btn-ghost btn-sm" id="btnEsClear">🗑️ 清空ES</button>
+                            <span id="restaurantEsStatus" class="hint" style="margin:0">就绪</span>
+                        </div>
+                    </div>
+
+                    <div class="es-search-row">
+                        <input id="esSearchKeyword" type="text" class="es-search-input" placeholder="搜饭店、菜系、地址… 试试「火锅」「北京」「包间」" />
+                        <select id="esSortBy" style="padding:10px 16px;border:2px solid #e8e8e8;border-radius:12px;font-size:14px;outline:none;background:#fff;cursor:pointer;transition:border-color .2s;white-space:nowrap">
+                            <option value="rating_desc">评分 ↓</option>
+                            <option value="rating_asc">评分 ↑</option>
+                            <option value="createTime_desc">最新 ↓</option>
+                            <option value="createTime_asc">最早 ↑</option>
+                        </select>
+                        <select id="esMaxDistance" style="padding:10px 16px;border:2px solid #e8e8e8;border-radius:12px;font-size:14px;outline:none;background:#fff;cursor:pointer;white-space:nowrap">
+                            <option value="0">📍 距离不限</option>
+                            <option value="1">1 公里内</option>
+                            <option value="3" selected>3 公里内</option>
+                            <option value="5">5 公里内</option>
+                            <option value="10">10 公里内</option>
+                        </select>
+                        <button type="button" class="btn btn-ghost btn-sm" id="btnEsLocate" title="定位我的位置" style="font-size:13px;padding:10px 14px;border-radius:12px;white-space:nowrap">📍 定位</button>
+                        <span id="esLocationInfo" style="font-size:12px;color:var(--muted,#999);white-space:nowrap">未定位</span>
+                        <input type="hidden" id="esLat" value="" />
+                        <input type="hidden" id="esLon" value="" />
+                        <label style="display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer;font-size:13px;color:var(--muted,#999);user-select:none">
+                            <input type="checkbox" id="esSecondaryFilter" /> 🎯 二次过滤
+                        </label>
+                        <button type="button" class="btn" id="btnEsSearch" style="background:#1890ff;color:#fff;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:500;white-space:nowrap">🔍 搜索</button>
+                    </div>
+
+                    <div class="es-tags" id="esCuisineTags">
+                        <span class="es-tag active" data-cuisine="">全部菜系</span>
+                        <span class="es-tag" data-cuisine="川菜">🌶️ 川菜</span>
+                        <span class="es-tag" data-cuisine="粤菜">🥟 粤菜</span>
+                        <span class="es-tag" data-cuisine="湘菜">🔥 湘菜</span>
+                        <span class="es-tag" data-cuisine="鲁菜">🏮 鲁菜</span>
+                        <span class="es-tag" data-cuisine="淮扬菜">🍜 淮扬菜</span>
+                        <span class="es-tag" data-cuisine="日料">🍣 日料</span>
+                        <span class="es-tag" data-cuisine="西餐">🥩 西餐</span>
+                        <span class="es-tag" data-cuisine="火锅">🍲 火锅</span>
+                        <span class="es-tag" data-cuisine="东北菜">🥘 东北菜</span>
+                        <span class="es-tag" data-cuisine="西北菜">🍢 西北菜</span>
+                    </div>
+
+                    <div id="esSearchResult" style="display:none;margin-top:4px">
+                        <div class="es-stat" id="esStatBar"></div>
+                        <div id="esAggPanel" style="display:none;margin:8px 0;padding:16px;background:#fafafa;border-radius:12px;border:1px solid #f0f0f0">
+                            <div style="display:flex;gap:24px;flex-wrap:wrap">
+                                <div style="flex:2;min-width:200px">
+                                    <div style="font-size:14px;font-weight:600;color:#333;margin-bottom:8px">📊 评分分布</div>
+                                    <div id="esRatingDist"></div>
+                                </div>
+                                <div style="flex:1;min-width:140px">
+                                    <div style="font-size:14px;font-weight:600;color:#333;margin-bottom:8px">📈 总体概览</div>
+                                    <div id="esRatingStats"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="es-results" id="esResultCards"></div>
+                        <div id="esPagination" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 0 4px 0">
+                            <button type="button" class="btn btn-ghost btn-sm" id="esPrevPage" style="visibility:hidden">‹ 上一页</button>
+                            <span id="esPageInfo" style="font-size:13px;color:#999">第 0 / 0 页</span>
+                            <button type="button" class="btn btn-ghost btn-sm" id="esNextPage" style="visibility:hidden">下一页 ›</button>
+                        </div>
+                        <div id="esMapContainer" style="height:400px;border-radius:12px;overflow:hidden;margin-top:12px;border:1px solid #e8e8e8"></div>
+                    </div>
+                </div>
+                <div id="crud-restaurantAmenity"></div>
+            </section>
+            <section id="page-devdiary" class="page">
+                <div class="card" style="margin-bottom:1rem">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+                        <h3 style="margin:0;font-size:1.1rem;font-weight:600">📋 版本记录</h3>
+                        <select id="versionSelect" style="padding:8px 16px;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none;min-width:200px">
+                            <option value="latest">最新（按时间排序）</option>
+                            <option value="v1.1">v1.1 — ES geo_point 地理 + 高德地图</option>
+                            <option value="v1.0">v1.0 — ES 搜索 + Bool 查询</option>
+                            <option value="v0.5">v0.5 — MongoDB 酒店待遇</option>
+                            <option value="v0.4">v0.4 — 秒杀功能</option>
+                            <option value="v0.3">v0.3 — Redis+Lua 预扣库存</option>
+                            <option value="v0.2">v0.2 — MQ 可靠性 + 死信队列</option>
+                            <option value="v0.1">v0.1 — 订单核心链路</option>
+                        </select>
+                    </div>
+                    <div id="versionContent">
+                        <div id="versionLatest">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#52c41a;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">最新</span>
+                                    <span style="font-size:12px;color:#999">2026-07-15</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="background:#f6ffed;padding:12px 16px;border-radius:10px;margin-bottom:12px">
+                                        <strong style="color:#52c41a">✅ 已完成全部功能</strong>
+                                    </div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🗺️ <strong>高德地图集成</strong> — 地图视图切换 + 卡片定位小地图弹窗</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📍 <strong>ES geo_point 地理</strong> — 导入时拼 location 嵌套对象，搜索时拆回 lat/lon</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🗑️ <strong>ES 清空索引</strong> — DeleteByQueryRequest 清空 ES 数据</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📦 <strong>ES 搜索</strong> — 批量导入 + matchQuery + Bool 查询 + termQuery 菜系筛选</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔬 <strong>ES vs MySQL 压测对比</strong> — 倒排索引 8ms vs LIKE 35ms</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">⚡ <strong>秒杀功能</strong> — Redis+Lua 原子扣库存 + 一人一单 + MQ 异步落库</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">💾 <strong>Redis+Lua 预扣库存</strong> — 20线程压测 0% 异常，7ms 响应</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🐇 <strong>死信队列</strong> — 30分钟超时自动取消 + 恢复库存</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🛡️ <strong>订单 11 道防线</strong> — 幂等 + 防重 + 条件 UPDATE + 死锁防护</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🍃 <strong>MongoDB 酒店待遇</strong> — Repository + 索引 + StartingWith 优化</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🏗️ <strong>BaseService 退役</strong> — 7 个服务改为 IService，代码瘦身</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📊 <strong>JMeter 压测</strong> — 混合场景 + 死锁排查 + SELECT FOR UPDATE</div>
+                                    <div style="padding:8px 16px">📖 <strong>版本记录</strong> — 下拉查看各版本更新内容</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV11" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v1.1</span>
+                                    <span style="font-size:12px;color:#999">2026-07-15</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🗺️ <strong>高德地图集成</strong> — 地图/列表视图切换 + 卡片点击弹出小地图定位</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📍 <strong>ES geo_point 地理字段</strong> — 导入时 latitude/longitude 合并为 location 嵌套对象发送给 ES，搜索时解析 location 拆回 lat/lon</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🗑️ <strong>ES 清空索引</strong> — DELETE /clear-es 调用 DeleteByQueryRequest 清空索引数据</div>
+                                    <div style="padding:8px 16px">🐛 <strong>踩坑：JSONObject.put vs set</strong> — put 标记为 @Deprecated，改用 set</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV10" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v1.0</span>
+                                    <span style="font-size:12px;color:#999">2026-07-14</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📦 <strong>ES 批量导入</strong> — BulkRequest + BATCH_SIZE=1000</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔍 <strong>matchQuery 搜索</strong> — copy_to all 全字段分词搜索</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🧩 <strong>Bool 查询</strong> — must(matchQuery) + filter(termQuery) 组合条件</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🎯 <strong>termQuery</strong> — cuisineType.keyword 菜系精确筛选</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📄 <strong>分页</strong> — from + size，返回 PageResult</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🏷️ <strong>前端标签</strong> — 下拉框改点击标签切换菜系</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">⚡ <strong>ES vs MySQL 对比</strong> — ES 8ms vs LIKE %keyword% 35ms</div>
+                                    <div style="padding:8px 16px">🐛 <strong>踩坑：日期格式 + BulkResponse</strong> — epoch_millis + hasFailures 检查</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV05" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v0.5</span>
+                                    <span style="font-size:12px;color:#999">2026-07-10</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🍃 <strong>MongoDB 酒店待遇</strong> — 完整 CRUD + MongoRepository</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📊 <strong>索引优化</strong> — @Indexed + @CompoundIndex + StartingWith 前缀跳转</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🏷️ <strong>批量删除</strong> — deleteAllById + 前端 batchDelete</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🐛 <strong>踩坑：DTO id 覆盖</strong> — BeanUtil.copyProperties 把 id 覆盖成 null</div>
+                                    <div style="padding:8px 16px">🐛 <strong>踩坑：YAML 空格</strong> — 冒号后面必须有一个空格</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV04" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v0.4</span>
+                                    <span style="font-size:12px;color:#999">2026-07-10</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔥 <strong>秒杀功能</strong> — 独立表 biz_seckill（解耦普通库存）</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📜 <strong>Lua 脚本</strong> — 原子扣库存 + SISMEMBER/SADD 一人一单</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📦 <strong>MQ 异步落库</strong> — 秒杀库存最终一致性</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">⏰ <strong>库存预热</strong> — @EventListener 启动时加载到 Redis</div>
+                                    <div style="padding:8px 16px">📋 <strong>管理端 CRUD</strong> — 秒杀活动增删改查 + 限购逻辑</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV03" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v0.3</span>
+                                    <span style="font-size:12px;color:#999">2026-07-09</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">💾 <strong>Redis+Lua 预扣库存</strong> — Lua 原子扣减 + 恢复脚本</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🧵 <strong>TransactionTemplate</strong> — 长事务拆分，远程调用放外面</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🎯 <strong>压测对比</strong> — 改前 66ms/36.95% → 改后 7ms/0%（Redis+Lua）</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🗄️ <strong>MQ 异步落库存</strong> — stock.deduct.queue + stock.restore.queue</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">💉 <strong>@PostConstruct</strong> — 启动时加载 MySQL 库存到 Redis</div>
+                                    <div style="padding:8px 16px">🐛 <strong>踩坑：库存负数</strong> — deductStock 返回 false 但没检查</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV02" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v0.2</span>
+                                    <span style="font-size:12px;color:#999">2026-07-06 ~ 07-07</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🐇 <strong>死信队列</strong> — 下单 30 分钟超时自动取消 + 恢复库存</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🛡️ <strong>订单 11 道防线</strong> — 预检查 + 防重 + 状态机 + 幂等</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔒 <strong>条件 UPDATE 替代分布式锁</strong> — WHERE status=CREATED 防并发</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🏗️ <strong>BaseService 退役</strong> — 7 个服务改为 IService，代码瘦身 30%</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔗 <strong>MQ 全链路可靠性</strong> — ConfirmCallback + ReturnCallback + 持久化</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🐛 <strong>踩坑：死锁</strong> — SELECT FOR UPDATE 按固定顺序拿锁</div>
+                                    <div style="padding:8px 16px">🐛 <strong>踩坑：库存重复扣除</strong> — 前端调了两次 API</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="versionV01" style="display:none">
+                            <div style="margin-bottom:1.5rem">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                                    <span style="background:#1890ff;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;font-weight:500">v0.1</span>
+                                    <span style="font-size:12px;color:#999">2026-06-26 ~ 07-03</span>
+                                </div>
+                                <div style="font-size:14px;line-height:2;color:#333">
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📦 <strong>订单核心链路</strong> — 下单 → 支付 → 取消 → 退款</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔒 <strong>Redisson 分布式锁</strong> — Watchdog 自动续期 + MultiLock</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🐇 <strong>RabbitMQ 整合</strong> — 生产者/消费者 + Jackson 自动序列化</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">☕ <strong>Redis 缓存</strong> — 防穿透（空值）+ 防雪崩（随机过期）</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">⚡ <strong>JMeter 压测</strong> — 订单详情接口 5ms / 56.6 tps / 0% 异常</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📊 <strong>MySQL 索引优化</strong> — 右模糊走索引，左模糊不走，深分页优化</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">🔗 <strong>MQ 可靠性</strong> — ConfirmCallback + 持久化三层 + 幂等 + 扣库存</div>
+                                    <div style="padding:8px 16px;border-bottom:1px solid #f0f0f0">📋 <strong>饭店待遇模块</strong> — MySQL 表 + 前后端 CRUD + 测试数据生成</div>
+                                    <div style="padding:8px 16px">🐛 <strong>踩坑：JMeter 卡死</strong> — 拖拽 jmx 进窗口导致，要用文件→打开</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section><section id="page-hotelAmenity" class="page">
+                <div class="card" style="margin-bottom:1rem;display:none" id="testDataPanel">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+                        <h3 style="margin:0;font-size:1rem">🧪 压测工具</h3>
+                        <span id="testDataStatus" style="font-size:0.8rem;color:var(--muted)">就绪</span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+                        <span style="font-size:0.85rem;color:var(--muted)">生成</span>
+                        <input id="testDataCount" type="number" value="10000" min="1" max="1000000"
+                               style="width:100px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:14px"/>
+                        <span style="font-size:0.85rem;color:var(--muted)">条</span>
+                        <button type="button" class="btn btn-ghost btn-sm" data-quick="10000">1万</button>
+                        <button type="button" class="btn btn-ghost btn-sm" data-quick="100000">10万</button>
+                        <button type="button" class="btn btn-ghost btn-sm" data-quick="500000">50万</button>
+                        <button type="button" class="btn btn-ghost btn-sm" data-quick="1000000">100万</button>
+                        <span style="width:1px;height:24px;background:#ddd;margin:0 0.25rem"></span>
+                        <button type="button" class="btn btn-sm" id="btnGenerateTest" style="background:#722ed1;color:#fff">⚡ 生成</button>
+                        <button type="button" class="btn btn-ghost btn-sm" id="btnClearTest" style="color:#ff4d4f">🗑️ 清空测试数据</button>
+                    </div>
+                </div>
+                <div id="crud-hotelAmenity"></div>
+            </section>
+        </div>
+    </div>
+</div>
+<script src="/js/app.js?v=2"></script>
+<script src="/js/mock-crud.js"></script>
+<script src="/js/archive-admin.js"></script>
+<script>
+(function () {
+    if (!AppSession.requireAuth()) return;
+
+    AppTheme.mountPicker(document.getElementById('themeMount'));
+
+    const user = AppSession.getUser();
+    const $ = (id) => document.getElementById(id);
+
+    const CRUD_PAGES = ['company', 'department', 'userMgmt', 'productMgmt', 'orderMgmt', 'seckillMgmt', 'restaurantAmenity', 'hotelAmenity', 'hotel', 'room', 'booking', 'customer'];
+
+    const titles = {
+        devdiary: '📋 版本记录',
+        dashboard: '工作台',
+        company: '公司管理',
+        department: '部门管理',
+        userMgmt: '用户管理',
+        productMgmt: '产品管理',
+        orderMgmt: '订单管理',
+        seckillMgmt: '秒杀活动管理',
+        restaurantAmenity: '饭店管理',
+        hotelAmenity: '酒店待遇管理',
+        archive: '档案管理',
+        hotel: '酒店房间',
+        room: '客房管理',
+        booking: '预订管理',
+        customer: '客户管理'
+    };
+
+    function avatarSrc(url) {
+        return url || '/img/avatar-1.png';
+    }
+
+    function initProfile() {
+        $('headerUserName').textContent = user.userName || '-';
+        $('headerRole').textContent = user.role || '-';
+        $('headerAvatar').src = avatarSrc(user.avatarUrl);
+        $('welcomeAvatar').src = avatarSrc(user.avatarUrl);
+        $('welcomeText').textContent = '欢迎，' + (user.userName || '');
+        $('welcomeSub').textContent = '当前角色：' + (user.role || '-') + ' · 用户 ID：' + user.userId;
+        $('statUserId').textContent = user.userId;
+        $('statRole').textContent = user.role || '-';
+        $('statExpire').textContent = (user.expireInSeconds || 0) + ' 秒';
+
+        // 自动填充模拟下单的买家名称
+        var buyerNameInput = document.getElementById('simBuyerName');
+        if (buyerNameInput && user && user.userName) {
+            buyerNameInput.value = user.userName;
+        }
+        // 商品下拉选择时自动填充名称
+        var simSku = document.getElementById('simSku');
+        var simProductName = document.getElementById('simProductName');
+        var productNames = { 'SKU-DEMO': '演示商品 A', 'SKU-BOOK': 'Spring Cloud 实战', 'SKU-CLOUD': '云服务套餐-基础版' };
+        if (simSku && simProductName) {
+            simSku.addEventListener('change', function () {
+                simProductName.value = productNames[simSku.value] || simSku.value;
+            });
+        }
+    }
+
+    function switchPage(name) {
+        document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
+        document.querySelectorAll('.nav-item[data-page]').forEach(function (n) { n.classList.remove('active'); });
+        const page = $('page-' + name);
+        if (page) page.classList.add('active');
+        const nav = document.querySelector('.nav-item[data-page="' + name + '"]');
+        if (nav) nav.classList.add('active');
+        $('pageTitle').textContent = titles[name] || name;
+
+        if (CRUD_PAGES.indexOf(name) >= 0) {
+            const root = $('crud-' + name);
+            if (root) MockCrudRegistry.mount(name, root);
+        }
+        if (name === 'archive') {
+            const root = $('crud-archive');
+            if (root && typeof ArchiveAdmin !== 'undefined') {
+                ArchiveAdmin.mount(root);
+            }
+        }
+        // 显示/隐藏压测工具面板
+        var panel = document.getElementById('testDataPanel');
+        if (panel) {
+            panel.style.display = name === 'hotelAmenity' ? '' : 'none';
+        }
+        var rPanel = document.getElementById('restaurantTestDataPanel');
+        if (rPanel) {
+            rPanel.style.display = name === 'restaurantAmenity' ? '' : 'none';
+        }
+    }
+
+    document.querySelectorAll('.nav-item[data-page]').forEach(function (btn) {
+        btn.addEventListener('click', function () { switchPage(btn.getAttribute('data-page')); });
+    });
+    document.querySelectorAll('[data-goto]').forEach(function (btn) {
+        btn.addEventListener('click', function () { switchPage(btn.getAttribute('data-goto')); });
+    });
+
+    $('btnLogout').onclick = logout;
+
+    // 模拟用户下单：调用真实下单 API → MQ 异步支付 → 同步到管理列表
+    var btnSimOrder = document.getElementById('btnSimOrder');
+    if (btnSimOrder) {
+        btnSimOrder.onclick = async function () {
+            var out = document.getElementById('simOrderOutput');
+            out.textContent = '⏳ 提交中…';
+            try {
+                var body = {
+                    buyerUserId: Number(document.getElementById('simBuyerId').value),
+                    productCode: document.getElementById('simSku').value.trim(),
+                    quantity: Number(document.getElementById('simQty').value)
+                };
+                // 1. 调用真实下单 API（写 biz_order + MQ 支付）
+                var res = await fetch('/cloud-business/api/orders/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + AppSession.getToken()
+                    },
+                    body: JSON.stringify(body)
+                });
+                var submitResult = await res.json();
+                if (submitResult.code !== 200) {
+                    out.textContent = '❌ 下单失败: ' + (submitResult.message || '未知错误');
+                    return;
+                }
+                var orderData = submitResult.data;
+                out.textContent = '✅ 下单成功！订单号: ' + orderData.orderNo + '\n金额: ¥' + orderData.totalAmount;
+                // 刷新订单管理表格
+                if (typeof MockCrudRegistry !== 'undefined') {
+                    MockCrudRegistry.refresh('orderMgmt');
+                }
+            } catch (e) {
+                out.textContent = '❌ 请求失败: ' + e.message;
+            }
+        };
+    }
+
+    // 订单操作：支付 / 取消 / 退款
+    var orderNoInput = document.getElementById('simOrderNo');
+    // 下单成功后自动填入订单号
+    var origSubmit = btnSimOrder.onclick;
+    btnSimOrder.onclick = async function () {
+        await origSubmit.call(this);
+        var out = document.getElementById('simOrderOutput');
+        var match = out.textContent.match(/订单号: (\S+)/);
+        if (match) orderNoInput.value = match[1];
+    };
+
+    function orderAction(url, successMsg) {
+        return async function () {
+            var orderNo = orderNoInput.value.trim();
+            var out = document.getElementById('simOrderActionOutput');
+            if (!orderNo) { out.textContent = '⚠️ 请先输入订单号'; return; }
+            out.textContent = '⏳ 操作中…';
+            try {
+                var res = await fetch(url + orderNo, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+                });
+                var data = await res.json();
+                if (data.code === 200) {
+                    out.textContent = '✅ ' + successMsg;
+                    if (typeof MockCrudRegistry !== 'undefined') MockCrudRegistry.refresh('orderMgmt');
+                } else {
+                    out.textContent = '❌ ' + (data.message || '操作失败');
+                }
+            } catch (e) {
+                out.textContent = '❌ 请求失败: ' + e.message;
+            }
+        };
+    }
+    document.getElementById('btnSimPay').onclick = orderAction('/cloud-business/api/orders/pay/', '支付成功');
+    document.getElementById('btnSimCancel').onclick = orderAction('/cloud-business/api/orders/cancel/', '取消成功');
+    document.getElementById('btnSimRefund').onclick = orderAction('/cloud-business/api/orders/refund/', '退款成功');
+
+    // 压测工具：快捷数量按钮（酒店）
+    document.querySelectorAll('[data-quick]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.getElementById('testDataCount').value = btn.getAttribute('data-quick');
+        });
+    });
+
+    // 压测工具：快捷数量按钮（饭店）
+    document.querySelectorAll('[data-restaurant-quick]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.getElementById('restaurantTestDataCount').value = btn.getAttribute('data-restaurant-quick');
+        });
+    });
+
+    // 压测工具：生成数据
+    document.getElementById('btnGenerateTest').addEventListener('click', async function () {
+        var count = Number(document.getElementById('testDataCount').value);
+        if (!count || count < 1) { alert('请输入有效数量'); return; }
+        var statusEl = document.getElementById('testDataStatus');
+        var btn = document.getElementById('btnGenerateTest');
+        btn.disabled = true;
+        statusEl.textContent = '⏳ 生成中… 数据量较大请耐心等待';
+        try {
+            var res = await fetch('/cloud-business/api/hotel-amenities/test/init/' + count, {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+            });
+            var data = await res.json();
+            if (data.code === 200) {
+                statusEl.textContent = '✅ ' + data.data;
+                if (typeof MockCrudRegistry !== 'undefined') MockCrudRegistry.refresh('hotelAmenity');
+            } else {
+                statusEl.textContent = '❌ ' + (data.message || '生成失败');
+            }
+        } catch (e) {
+            statusEl.textContent = '❌ 请求失败: ' + e.message;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    // 压测工具：清空数据（酒店）
+    document.getElementById('btnClearTest').addEventListener('click', async function () {
+        if (!confirm('确定清空所有测试数据（hotelName 以"压测"开头的数据）？')) return;
+        var statusEl = document.getElementById('testDataStatus');
+        var btn = document.getElementById('btnClearTest');
+        btn.disabled = true;
+        statusEl.textContent = '⏳ 清空中…';
+        try {
+            var res = await fetch('/cloud-business/api/hotel-amenities/clear-test', {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+            });
+            var data = await res.json();
+            if (data.code === 200) {
+                statusEl.textContent = '✅ 测试数据已清空';
+                if (typeof MockCrudRegistry !== 'undefined') MockCrudRegistry.refresh('hotelAmenity');
+            } else {
+                statusEl.textContent = '❌ ' + (data.message || '清空失败');
+            }
+        } catch (e) {
+            statusEl.textContent = '❌ 请求失败: ' + e.message;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    // ========== 饭店压测工具 ==========
+    document.getElementById('btnRestaurantGenerateTest').addEventListener('click', async function () {
+        var count = Number(document.getElementById('restaurantTestDataCount').value);
+        if (!count || count < 1) { alert('请输入有效数量'); return; }
+        var statusEl = document.getElementById('restaurantTestDataStatus');
+        var btn = document.getElementById('btnRestaurantGenerateTest');
+        btn.disabled = true;
+        statusEl.textContent = '⏳ 生成中… 数据量较大请耐心等待';
+        try {
+            var res = await fetch('/cloud-business/api/restaurant-amenities/test/init/' + count, {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+            });
+            var data = await res.json();
+            if (data.code === 200) {
+                statusEl.textContent = '✅ ' + data.data;
+                if (typeof MockCrudRegistry !== 'undefined') MockCrudRegistry.refresh('restaurantAmenity');
+            } else {
+                statusEl.textContent = '❌ ' + (data.message || '生成失败');
+            }
+        } catch (e) {
+            statusEl.textContent = '❌ 请求失败: ' + e.message;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    document.getElementById('btnRestaurantClearTest').addEventListener('click', async function () {
+        if (!confirm('确定清空所有饭店测试数据（restaurantName 以"压测"开头的数据）？')) return;
+        var statusEl = document.getElementById('restaurantTestDataStatus');
+        var btn = document.getElementById('btnRestaurantClearTest');
+        btn.disabled = true;
+        statusEl.textContent = '⏳ 清空中…';
+        try {
+            var res = await fetch('/cloud-business/api/restaurant-amenities/clear-test', {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+            });
+            var data = await res.json();
+            if (data.code === 200) {
+                statusEl.textContent = '✅ 测试数据已清空';
+                if (typeof MockCrudRegistry !== 'undefined') MockCrudRegistry.refresh('restaurantAmenity');
+            } else {
+                statusEl.textContent = '❌ ' + (data.message || '清空失败');
+            }
+        } catch (e) {
+            statusEl.textContent = '❌ 请求失败: ' + e.message;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    // ========== ES 搜索面板 ==========
+    var esImportBtn = document.getElementById('btnEsImport');
+    var esSearchBtn = document.getElementById('btnEsSearch');
+    var esKeyword = document.getElementById('esSearchKeyword');
+    var esSortBy = document.getElementById('esSortBy');
+    var esStatus = document.getElementById('restaurantEsStatus');
+    var esResultDiv = document.getElementById('esSearchResult');
+    var esStatBar = document.getElementById('esStatBar');
+    var esResultCards = document.getElementById('esResultCards');
+
+    // 菜系标签点击
+    var cuisineTags = document.querySelectorAll('#esCuisineTags .es-tag');
+    var selectedCuisine = '';
+    cuisineTags.forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            cuisineTags.forEach(function (t) { t.classList.remove('active'); });
+            tag.classList.add('active');
+            selectedCuisine = tag.getAttribute('data-cuisine');
+        });
+    });
+
+    function escHtml(str) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(str || ''));
+        return d.innerHTML;
+    }
+
+    // 导入 ES
+    if (esImportBtn) {
+        esImportBtn.addEventListener('click', async function () {
+            esImportBtn.disabled = true;
+            esStatus.textContent = '⏳ 导入中…';
+            esStatus.style.color = '#1890ff';
+            try {
+                var res = await fetch('/cloud-business/api/es-restaurants/import', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+                });
+                var data = await res.json();
+                esStatus.textContent = data.code === 200 ? '✅ ' + data.data : '❌ ' + (data.message || '导入失败');
+                esStatus.style.color = data.code === 200 ? '#52c41a' : '#ff4d4f';
+            } catch (e) {
+                esStatus.textContent = '❌ 请求失败: ' + e.message;
+                esStatus.style.color = '#ff4d4f';
+            } finally {
+                esImportBtn.disabled = false;
+            }
+        });
+    }
+
+    // 清空 ES
+    var esClearBtn = document.getElementById('btnEsClear');
+    if (esClearBtn) {
+        esClearBtn.addEventListener('click', async function () {
+            if (!confirm('确定清空 ES 所有饭店数据？')) return;
+            esClearBtn.disabled = true;
+            esStatus.textContent = '⏳ 清空中…';
+            try {
+                var res = await fetch('/cloud-business/api/es-restaurants/clear-es', {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+                });
+                var data = await res.json();
+                esStatus.textContent = data.code === 200 ? '✅ ' + data.data : '❌ ' + (data.message || '清空失败');
+            } catch (e) {
+                esStatus.textContent = '❌ 请求失败: ' + e.message;
+            } finally {
+                esClearBtn.disabled = false;
+            }
+        });
+    }
+
+    // ES 搜索
+    var esCurrentPage = 1, esPageSize = 10;
+    var esPrevBtn = document.getElementById('esPrevPage');
+    var esNextBtn = document.getElementById('esNextPage');
+    var esPageInfo = document.getElementById('esPageInfo');
+
+    //渲染聚合图表
+    function renderAggregations(aggMap) {
+        var panel = document.getElementById('esAggPanel');
+        //没有聚合数据就隐藏面板
+        if (!aggMap || !aggMap.ratingDistribution) {
+            panel.style.display = 'none';
+            return;
+        }
+        panel.style.display = '';
+
+        //评分分布：条形图
+        var dist = aggMap.ratingDistribution;
+        var maxCount = 0;
+        dist.forEach(function (i) { if (i.count > maxCount) maxCount = i.count; });
+        document.getElementById('esRatingDist').innerHTML = dist.map(function (item) {
+            var pct = maxCount > 0 ? (item.count / maxCount * 100) : 0;
+            var barColor = item.key >= 4 ? '#52c41a' : item.key >= 3 ? '#fa8c16' : '#ff4d4f';
+            return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:13px">' +
+                '<span style="width:28px;text-align:right;color:#666;flex-shrink:0">' + item.key + '分</span>' +
+                '<div style="flex:1;height:18px;background:#eee;border-radius:9px;overflow:hidden">' +
+                '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:9px;transition:width .3s"></div>' +
+                '</div>' +
+                '<span style="width:44px;color:#999;flex-shrink:0;text-align:right">' + item.count + '</span>' +
+                '</div>';
+        }).join('');
+
+        //总体概览：平均分、最高、最低、总数
+        var stats = aggMap.ratingStats;
+        if (stats) {
+            document.getElementById('esRatingStats').innerHTML =
+                '<div style="text-align:center;margin-bottom:10px;padding:8px 0;background:#f0f8ff;border-radius:10px">' +
+                '<div style="color:#999;font-size:12px">平均评分</div>' +
+                '<div style="font-size:28px;font-weight:700;color:#1890ff">' + Number(stats.avg).toFixed(1) + '</div>' +
+                '</div>' +
+                '<div style="display:flex;justify-content:space-around;text-align:center">' +
+                '<div><div style="color:#999;font-size:11px">最高</div><div style="font-size:18px;font-weight:600;color:#52c41a">' + stats.max + '</div></div>' +
+                '<div><div style="color:#999;font-size:11px">最低</div><div style="font-size:18px;font-weight:600;color:#ff4d4f">' + stats.min + '</div></div>' +
+                '<div><div style="color:#999;font-size:11px">总数</div><div style="font-size:18px;font-weight:600">' + stats.count + '</div></div>' +
+                '</div>';
+        }
+    }
+
+    async function doSearch(page) {
+        var kw = esKeyword.value.trim();
+        if (!kw) { esStatus.textContent = '⚠️ 请输入关键词'; esStatus.style.color = '#fa8c16'; return; }
+        esSearchBtn.disabled = true;
+        esStatus.textContent = '⏳ 搜索中…';
+        esStatus.style.color = '#1890ff';
+        esResultDiv.style.display = 'none';
+        try {
+            var t0 = performance.now();
+            var sortVal = esSortBy ? esSortBy.value.split('_') : ['rating', 'desc'];
+            var sortBy = sortVal[0], sortOrder = sortVal[1];
+            var res = await fetch('/cloud-business/api/es-restaurants/search?keyword=' + encodeURIComponent(kw) + '&cuisineType=' + encodeURIComponent(selectedCuisine) + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder + '&page=' + page + '&size=' + esPageSize
+                + '&lat=' + (esLatInput ? esLatInput.value || '' : '') + '&lon=' + (esLonInput ? esLonInput.value || '' : '') + '&maxDistance=' + (document.getElementById('esMaxDistance') ? document.getElementById('esMaxDistance').value : 0)
+                + '&useSecondaryFilter=' + (document.getElementById('esSecondaryFilter') ? document.getElementById('esSecondaryFilter').checked : false), {
+                headers: { 'Authorization': 'Bearer ' + AppSession.getToken() }
+            });
+            var data = await res.json();
+            var t1 = performance.now();
+            var cost = (t1 - t0).toFixed(1);
+            if (data.code === 200) {
+                var pageData = data.data;
+                esCurrentPage = page;
+                var totalPages = Math.ceil(pageData.total / esPageSize) || 1;
+                esResultDiv.style.display = 'block';
+                esStatBar.innerHTML = '共 <em>' + pageData.total + '</em> 条结果 · 耗时 <em>' + cost + '</em> ms';
+                renderAggregations(pageData.aggregations);
+                if (pageData.records && pageData.records.length > 0) {
+                    esResultCards.innerHTML = pageData.records.map(function (r) {
+                        var stars = '';
+                        for (var s = 0; s < (r.rating || 0); s++) stars += '⭐';
+                        var tagBadges = '';
+                        if (r.amenities) {
+                            tagBadges = r.amenities.split(',').slice(0, 3).map(function (a) {
+                                return '<span class="es-badge es-badge-tag">' + escHtml(a.trim()) + '</span>';
+                            }).join('');
+                        }
+                        return '<div class="es-card" data-lat="' + (r.latitude || '') + '" data-lon="' + (r.longitude || '') + '" data-name="' + escHtml(r.restaurantName) + '">' +
+                            '<div class="es-card-info">' +
+                            '<div class="es-card-name">' + r.restaurantName + '</div>' +
+                            '<div class="es-card-addr">' + escHtml(r.address || '—') + '</div>' +
+                            '<div class="es-card-meta">' + tagBadges + '</div>' +
+                            '</div>' +
+                            '<div class="es-card-extra">' +
+                            '<div class="stars" style="white-space:nowrap">' + stars + '</div>' +
+                            '<div class="es-card-cuisine">' + escHtml(r.cuisineType || '—') + '</div>' +
+                            (r.latitude ? '<span class="es-card-loc" style="cursor:pointer;color:var(--accent);margin-top:4px;font-size:12px">📍 查看位置</span>' : '') +
+                            '</div>' +
+                            '</div>';
+                    }).join('');
+                } else {
+                    esResultCards.innerHTML = '<div style="text-align:center;padding:40px 0;color:#ccc;font-size:14px">😅 没有找到匹配的饭店</div>';
+                }
+                // 更新翻页按钮
+                esPageInfo.textContent = '第 ' + esCurrentPage + ' / ' + totalPages + ' 页';
+                esPrevBtn.style.visibility = esCurrentPage <= 1 ? 'hidden' : 'visible';
+                esNextBtn.style.visibility = esCurrentPage >= totalPages ? 'hidden' : 'visible';
+                esStatus.textContent = '✅ 搜索完成';
+                esStatus.style.color = '#52c41a';
+            } else {
+                esResultDiv.style.display = 'block';
+                esStatBar.innerHTML = '❌ ' + (data.message || '搜索失败');
+                esResultCards.innerHTML = '';
+                renderAggregations(null);
+                esStatus.textContent = '❌ 搜索失败';
+                esStatus.style.color = '#ff4d4f';
+            }
+        } catch (e) {
+            esResultDiv.style.display = 'block';
+            esStatBar.innerHTML = '❌ 请求失败: ' + escHtml(e.message);
+            esResultCards.innerHTML = '';
+            renderAggregations(null);
+            esStatus.textContent = '❌ 请求失败';
+            esStatus.style.color = '#ff4d4f';
+        } finally {
+            esSearchBtn.disabled = false;
+        }
+    }
+
+    if (esSearchBtn) {
+        esSearchBtn.addEventListener('click', function () { doSearch(1); });
+    }
+    if (esPrevBtn) {
+        esPrevBtn.addEventListener('click', function () { if (esCurrentPage > 1) doSearch(esCurrentPage - 1); });
+    }
+    if (esNextBtn) {
+        esNextBtn.addEventListener('click', function () { doSearch(esCurrentPage + 1); });
+    }
+
+    // 回车触发搜索
+    if (esKeyword) {
+        esKeyword.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && esSearchBtn) esSearchBtn.click();
+        });
+    }
+
+    // ========== 📍 定位 ==========
+    var esLocateBtn = document.getElementById('btnEsLocate');
+    var esLatInput = document.getElementById('esLat');
+    var esLonInput = document.getElementById('esLon');
+    var esLocInfo = document.getElementById('esLocationInfo');
+    if (esLocateBtn) {
+        esLocateBtn.addEventListener('click', function() {
+            esLocInfo.textContent = '⏳ 定位中…';
+            // 先用 HTML5 定位（比 AMap 轻量）
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    esLatInput.value = pos.coords.latitude.toFixed(6);
+                    esLonInput.value = pos.coords.longitude.toFixed(6);
+                    esLocInfo.textContent = '📍 ' + esLatInput.value + ', ' + esLonInput.value;
+                }, function() {
+                    // 定位失败 → 给默认北京坐标
+                    setDefaultLocation('⚠️ 定位失败，已设为北京');
+                }, { timeout: 5000 });
+            } else {
+                setDefaultLocation('⚠️ 浏览器不支持定位，已设为北京');
+            }
+        });
+    }
+    function setDefaultLocation(msg) {
+        esLatInput.value = '39.9042';
+        esLonInput.value = '116.4074';
+        esLocInfo.textContent = msg;
+    }
+
+
+    // ========== 🗺️ 高德地图 ==========
+    var amapInstance = null;
+    var esMapContainer = document.getElementById('esMapContainer');
+
+    function initMapWithResults() {
+        if (typeof AMap === 'undefined') { setTimeout(initMapWithResults, 500); return; }
+        var cards = document.querySelectorAll('#esResultCards .es-card');
+        var points = [];
+        cards.forEach(function(c) {
+            var lat = parseFloat(c.getAttribute('data-lat'));
+            var lon = parseFloat(c.getAttribute('data-lon'));
+            if (lat && lon) points.push({ lat: lat, lon: lon, name: c.getAttribute('data-name') });
+        });
+        if (!points.length) { esMapContainer.style.display = 'none'; return; }
+        esMapContainer.style.display = 'block';
+        esMapContainer.innerHTML = '';
+        var clon = points.reduce(function(s, p) { return s + p.lon; }, 0) / points.length;
+        var clat = points.reduce(function(s, p) { return s + p.lat; }, 0) / points.length;
+        if (amapInstance) { amapInstance.destroy(); amapInstance = null; }
+        amapInstance = new AMap.Map('esMapContainer', { zoom: 12, center: [clon, clat], mapStyle: 'amap://styles/light' });
+        points.forEach(function(p) {
+            var m = new AMap.Marker({
+                position: [p.lon, p.lat], title: p.name,
+                label: { content: '<div style="padding:2px 8px;background:#fff;border-radius:4px;border:1px solid var(--accent);font-size:12px;color:var(--accent);white-space:nowrap">' + escHtml(p.name) + '</div>', offset: new AMap.Pixel(0, -28) }
+            });
+            m.on('click', function() {
+                new AMap.InfoWindow({ content: '<div style="padding:8px;font-size:14px"><strong>' + escHtml(p.name) + '</strong></div>', offset: new AMap.Pixel(0, -30) }).open(amapInstance, m.getPosition());
+            });
+            amapInstance.add(m);
+        });
+        amapInstance.setFitView(null, false, [50, 50, 50, 50]);
+    }
+
+    // 点击"查看位置" → 地图定位
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.es-card-loc');
+        if (!btn || !amapInstance) return;
+        var card = btn.closest('.es-card');
+        var lat = parseFloat(card.getAttribute('data-lat'));
+        var lon = parseFloat(card.getAttribute('data-lon'));
+        var name = card.getAttribute('data-name');
+        if (!lat || !lon) return;
+        amapInstance.setCenter([lon, lat]);
+        amapInstance.setZoom(15);
+        amapInstance.getAllOverlays('marker').forEach(function(m) {
+            var pos = m.getPosition();
+            if (Math.abs(pos.lng - lon) < 0.001 && Math.abs(pos.lat - lat) < 0.001) {
+                new AMap.InfoWindow({ content: '<div style="padding:8px;font-size:14px"><strong>' + escHtml(name) + '</strong></div>', offset: new AMap.Pixel(0, -30) }).open(amapInstance, pos);
+            }
+        });
+        esMapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // 搜索完后自动初始化地图
+    var origDoSearch = doSearch;
+    doSearch = function(page) {
+        origDoSearch(page);
+        setTimeout(function() {
+            var has = document.querySelectorAll('#esResultCards .es-card[data-lat]').length > 0;
+            if (has) initMapWithResults(); else esMapContainer.style.display = 'none';
+        }, 300);
+    };
+
+    // ========== 📋 版本记录 ==========
+    (function() {
+        var versionSelect = document.getElementById('versionSelect');
+        if (versionSelect) {
+            versionSelect.addEventListener('change', function() {
+                var val = this.value;
+                // 隐藏所有版本内容
+                document.querySelectorAll('[id^="version"]').forEach(function(el) {
+                    if (el.id !== 'versionSelect' && el.id.startsWith('version')) {
+                        el.style.display = 'none';
+                    }
+                });
+                // 显示选中的版本
+                if (val === 'latest') {
+                    var latest = document.getElementById('versionLatest');
+                    if (latest) latest.style.display = 'block';
+                } else {
+                    // v1.2 → versionV12（去掉点）
+                    var id = 'versionV' + val.substring(1).replace('.', '');
+                    var target = document.getElementById(id);
+                    if (target) target.style.display = 'block';
+                }
+            });
+        }
+    })();
+
+    // ========== 🎯 每日金句 ==========
+    (function() {
+        var quotes = [
+            { text: '不积跬步，无以至千里；不积小流，无以成江海。', author: '荀子《劝学》' },
+            { text: '学而不思则罔，思而不学则殆。', author: '孔子' },
+            { text: '路漫漫其修远兮，吾将上下而求索。', author: '屈原《离骚》' },
+            { text: '知之者不如好之者，好之者不如乐之者。', author: '孔子' },
+            { text: '业精于勤，荒于嬉；行成于思，毁于随。', author: '韩愈' },
+            { text: '纸上得来终觉浅，绝知此事要躬行。', author: '陆游' },
+            { text: '博观而约取，厚积而薄发。', author: '苏轼' },
+            { text: '千淘万漉虽辛苦，吹尽狂沙始到金。', author: '刘禹锡' },
+            { text: '问渠那得清如许？为有源头活水来。', author: '朱熹' },
+            { text: '山重水复疑无路，柳暗花明又一村。', author: '陆游' },
+            { text: '长风破浪会有时，直挂云帆济沧海。', author: '李白' },
+            { text: '宝剑锋从磨砺出，梅花香自苦寒来。', author: '《警世贤文》' },
+            { text: '世上无难事，只要肯登攀。', author: '毛泽东' },
+            { text: 'Talk is cheap. Show me the code.', author: 'Linus Torvalds' },
+            { text: '简洁的代码才是好代码。', author: '编程箴言' }
+        ];
+        var q = quotes[Math.floor(Math.random() * quotes.length)];
+        var qEl = document.getElementById('quoteText');
+        var aEl = document.getElementById('quoteAuthor');
+        if (qEl) qEl.textContent = '「' + q.text + '」';
+        if (aEl) aEl.textContent = '—— ' + q.author;
+    })();
+
+    // ========== 🌤️ 实时天气（高德 Web Service JSONP） ==========
+    // JSONP 回调函数（必须挂 window 上才能被 script 标签调用）
+    window.__ipCb = function(data) {
+        var city = '北京';
+        if (data && data.status === '1' && data.city) {
+            city = data.city.replace(/市$/g, '');
+            var cEl = document.getElementById('weatherCity');
+            if (cEl) cEl.textContent = '📍 ' + city;
+        }
+        // 获取实时天气
+        var s = document.createElement('script');
+        s.src = 'https://restapi.amap.com/v3/weather/weatherInfo?key=d20f1f5b4d0977c625fa555ae0e17ed6&city=' + encodeURIComponent(city) + '&output=JSON&callback=__weatherCb';
+        document.body.appendChild(s);
+        setTimeout(function() { try { document.body.removeChild(s); } catch(e) {} }, 8000);
+    };
+    window.__weatherCb = function(data) {
+        if (!data || data.status !== '1' || !data.lives || !data.lives.length) return;
+        var live = data.lives[0];
+        var tEl = document.getElementById('weatherTemp');
+        var dEl = document.getElementById('weatherDesc');
+        var cEl = document.getElementById('weatherCity');
+        var iEl = document.getElementById('weatherIcon');
+        if (tEl) tEl.textContent = live.temperature + '°C';
+        if (dEl) dEl.textContent = live.weather + ' · 湿度 ' + live.humidity + '%';
+        if (cEl) cEl.textContent = '📍 ' + live.city;
+        // 根据天气换图标
+        var w = live.weather || '';
+        var icon = '🌤️';
+        if (w.indexOf('晴') >= 0) icon = '☀️';
+        else if (w.indexOf('多云') >= 0) icon = '⛅';
+        else if (w.indexOf('阴') >= 0) icon = '☁️';
+        else if (w.indexOf('雨') >= 0) icon = '🌧️';
+        else if (w.indexOf('雪') >= 0) icon = '❄️';
+        else if (w.indexOf('雾') >= 0 || w.indexOf('霾') >= 0) icon = '🌫️';
+        if (iEl) iEl.textContent = icon;
+    };
+    // 发起 IP 定位请求
+    (function() {
+        var s = document.createElement('script');
+        s.src = 'https://restapi.amap.com/v3/ip?key=d20f1f5b4d0977c625fa555ae0e17ed6&callback=__ipCb';
+        document.body.appendChild(s);
+        setTimeout(function() { try { document.body.removeChild(s); } catch(e) {} }, 4000);
+    })();
+
+    // ========== 🎛️ 侧栏折叠切换 + 一键回家 ==========
+    document.getElementById('btnSidebarToggle').addEventListener('click', function() {
+        var layout = document.querySelector('.layout');
+        layout.classList.toggle('sidebar-hidden');
+        this.title = layout.classList.contains('sidebar-hidden') ? '显示侧栏' : '隐藏侧栏';
+    });
+    document.getElementById('btnHome').addEventListener('click', function() {
+        switchPage('dashboard');
+    });
+
+    // ========== 📝 标签页颜文字（切标签时自动换） ==========
+    (function() {
+        var TITLE_IDLE = '(｡╯TㅅT)╯ 快回来…';
+        var TITLE_ACTIVE = '(◕‿◕✿) 管理后台';
+        document.title = TITLE_ACTIVE;
+        document.addEventListener('visibilitychange', function() {
+            document.title = document.hidden ? TITLE_IDLE : TITLE_ACTIVE;
+        });
+    })();
+
+    initProfile();
+
+})();
+</script>
+</body>
+</html>

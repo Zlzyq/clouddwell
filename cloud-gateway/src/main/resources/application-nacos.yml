@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+
+gateway:
+  routes:
+    auth: lb://cloud-auth
+    system: lb://cloud-system
+    business: lb://cloud-business

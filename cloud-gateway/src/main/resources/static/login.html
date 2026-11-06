@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>登录 · 管理平台</title>
+    <script src="/js/theme.js?v=2"></script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="stylesheet" href="/css/themes.css"/>
+    <link rel="stylesheet" href="/css/app.css"/>
+</head>
+<body class="login-page">
+<div id="themeMount" class="theme-mount theme-mount--login"></div>
+<div class="login-card">
+    <div class="login-brand">
+        <div class="login-logo">SC</div>
+        <h1>Spring Cloud 管理平台</h1>
+        <p>企业级管理平台</p>
+    </div>
+    <div id="alert" class="alert err"></div>
+    <form id="loginForm">
+        <label for="userId">用户 ID</label>
+        <select id="userId" name="userId">
+            <option value="1">1 - 管理员（超级管理员）</option>
+            <option value="2">2 - 运营专员</option>
+            <option value="10086">10086 - 普通用户</option>
+            <option value="10010">10010 - 小熊专属账号 🌟</option>
+        </select>
+        <label for="password">密码</label>
+        <input id="password" name="password" type="password" autocomplete="current-password"/>
+        <button type="submit" class="btn btn-block" id="btnSubmit">登 录</button>
+    </form>
+    <p class="login-hint">登录成功后将进入管理后台</p>
+</div>
+<script src="/js/app.js?v=2"></script>
+<script>
+(function () {
+    AppTheme.mountPicker(document.getElementById('themeMount'));
+    AppSession.redirectIfLoggedIn('/admin.html');
+
+    const form = document.getElementById('loginForm');
+    const alertEl = document.getElementById('alert');
+    const btn = document.getElementById('btnSubmit');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        alertEl.classList.remove('show');
+        btn.disabled = true;
+        btn.textContent = '登录中…';
+        try {
+            const userId = Number(document.getElementById('userId').value);
+            const password = document.getElementById('password').value;
+            await login(userId, password);
+            window.location.replace('/admin.html');
+        } catch (err) {
+            showAlert(alertEl, err.message || '登录失败', true);
+            btn.disabled = false;
+            btn.textContent = '登 录';
+        }
+    });
+})();
+</script>
+</body>
+</html>
