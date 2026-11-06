@@ -163,7 +163,7 @@ JMeter 三组混合场景（下单支付 / 下单取消 / 下单退款，20 线�
 
 查询接口另有单独压测（20 用户 × 100 次）：339ms → 建索引后 5ms → 加 Redis 后 2ms → 加分布式锁后 3ms。
 
-完整压测记录见 [docs/order-stress-test.docx](docs/order-stress-test.docx)。
+完整压测记录见 [docs/order-stress-test.md](docs/order-stress-test.md)（Word 原件：[order-stress-test.docx](docs/order-stress-test.docx)）。
 
 ## 说明
 
